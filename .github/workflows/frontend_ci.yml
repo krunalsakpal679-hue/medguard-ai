@@ -57,5 +57,5 @@ jobs:
       - name: Install Vercel CLI
         run: npm install --global vercel
       - name: Deploy to Vercel
-        run: npx vercel deploy --prod --cwd frontend --token=${{ secrets.VERCEL_TOKEN }} --yes
+        run: npx vercel deploy --prod --token=${{ secrets.VERCEL_TOKEN }} --yes
         shell: bash
