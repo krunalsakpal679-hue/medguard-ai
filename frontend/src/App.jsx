@@ -5,6 +5,7 @@ import LoadingSpinner from './components/common/LoadingSpinner';
 
 // Lazy-loaded Clinical Pages
 const LoginPage = lazy(() => import('./pages/LoginPage'));
+const RegisterPage = lazy(() => import('./pages/RegisterPage'));
 const DashboardPage = lazy(() => import('./pages/DashboardPage'));
 const DrugSearchPage = lazy(() => import('./pages/DrugSearchPage'));
 const DrugDetailPage = lazy(() => import('./pages/DrugDetailPage'));
@@ -31,6 +32,14 @@ const router = createBrowserRouter([
         element: (
             <Suspense fallback={<LoadingSpinner variant="pulse" size="lg" />}>
                 <LoginPage />
+            </Suspense>
+        )
+    },
+    {
+        path: '/register',
+        element: (
+            <Suspense fallback={<LoadingSpinner variant="pulse" size="lg" />}>
+                <RegisterPage />
             </Suspense>
         )
     },
