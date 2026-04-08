@@ -7,7 +7,6 @@ import {
     FileText, 
     X,
     ShieldCheck,
-    Languages,
     ArrowDown,
     Activity
 } from 'lucide-react'
