@@ -12,7 +12,8 @@ import {
     ChevronRight,
     LayoutGrid,
     LayoutList,
-    Layers
+    Layers,
+    Check
 } from 'lucide-react'
 import { useDrugSearch } from '../hooks/useDrugSearch'
 import DrugCard from '../components/dashboard/DrugCard'

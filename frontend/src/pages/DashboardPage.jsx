@@ -14,7 +14,8 @@ import {
     Stethoscope,
     LayoutDashboard,
     Bell,
-    CheckCircle2
+    CheckCircle2,
+    Clock
 } from 'lucide-react'
 import { useAuthStore } from '../store/authStore'
 import StatCard from '../components/dashboard/StatCard'

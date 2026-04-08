@@ -37,7 +37,7 @@ const DropZone = ({
             reader.onload = (e) => setPreview(e.target.result)
             reader.readAsDataURL(file)
         } else {
-            setPreview('pdf') # Placeholder for PDF identification
+            setPreview('pdf') // Placeholder for PDF identification
         }
         onFileSelect(file)
     }, [onFileSelect])
