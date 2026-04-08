@@ -3,12 +3,12 @@ from typing import List, Optional
 from fastapi import APIRouter, Depends, Query, HTTPException, status, Request
 from fastapi.responses import StreamingResponse
 from motor.motor_asyncio import AsyncIOMotorDatabase
-from ...db.database import get_db
-from ...core.auth_service import get_current_active_user
-from ...models.user import UserInDB, UserRole, UserUpdate
-from ...models.drug import DrugCreate
-from ...services.admin_service import admin_service
-from ...utils.audit_logger import audit_logger
+from app.db.database import get_db
+from app.core.security import get_current_active_user
+from app.models.user import UserInDB, UserRole, UserUpdate
+from app.models.drug import DrugCreate
+from app.services.admin_service import admin_service
+from app.core.logger import logger
 
 router = APIRouter(prefix="/admin", tags=["admin"])
 
