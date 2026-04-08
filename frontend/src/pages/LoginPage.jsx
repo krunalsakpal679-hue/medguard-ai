@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { 
@@ -7,6 +7,7 @@ import {
     ShieldCheck, 
     MessageSquare, 
     UserCheck,
+    CheckCircle,
 } from 'lucide-react'
 import { useAuthStore } from '../store/authStore'
 import GoogleLoginButton from '../components/auth/GoogleLoginButton'
@@ -15,21 +16,29 @@ const LoginPage = () => {
     const { t, i18n } = useTranslation()
     const navigate = useNavigate()
     const { isAuthenticated, setAuth } = useAuthStore()
+    const [toast, setToast] = useState(false)
 
     useEffect(() => {
         if (isAuthenticated) navigate('/dashboard')
     }, [isAuthenticated, navigate])
 
-    const switchLang = (code) => {
-        i18n.changeLanguage(code)
-    }
+    const switchLang = (code) => { i18n.changeLanguage(code) }
 
     const handleGuestLogin = () => {
         setAuth({ id: 'guest', name: 'Medical Guest', email: 'guest@medguard.ai' }, 'guest_token')
+        setToast(true)
+        setTimeout(() => navigate('/dashboard'), 1200)
     }
 
     return (
         <div className="min-h-screen bg-slate-50 flex items-center justify-center p-6 font-sans relative overflow-hidden">
+            {/* Success Toast */}
+            {toast && (
+                <div className="fixed top-5 right-5 z-50 flex items-center gap-3 px-5 py-3.5 rounded-2xl bg-emerald-600 text-white shadow-2xl shadow-emerald-500/30 text-sm font-bold">
+                    <CheckCircle className="w-5 h-5" />
+                    Welcome, Medical Guest! Redirecting...
+                </div>
+            )}
             {/* Ambient Background Elements */}
             <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-brand/5 rounded-full blur-[120px] animate-pulse" />
             <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-emerald-500/5 rounded-full blur-[120px] animate-pulse" />
