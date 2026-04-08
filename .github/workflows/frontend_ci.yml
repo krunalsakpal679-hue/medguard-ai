@@ -56,20 +56,8 @@ jobs:
       - uses: actions/checkout@v4
       - name: Install Vercel CLI
         run: npm install --global vercel
-      - name: Pull Vercel Environment Information
+      - name: Deploy to Vercel
         run: |
           cd frontend
-          npx vercel pull --yes --environment=production --token=${{ secrets.VERCEL_TOKEN }}
-        shell: bash
-      - name: Build Project Artifacts
-        run: |
-          cd frontend
-          npx vercel build --prod --token=${{ secrets.VERCEL_TOKEN }}
-        shell: bash
-        env:
-          SHELL: /bin/bash
-      - name: Deploy Project Artifacts to Vercel
-        run: |
-          cd frontend
-          npx vercel deploy --prebuilt --prod --token=${{ secrets.VERCEL_TOKEN }}
+          npx vercel deploy --prod --token=${{ secrets.VERCEL_TOKEN }} --yes
         shell: bash
