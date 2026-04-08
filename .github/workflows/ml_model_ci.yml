@@ -1,0 +1,45 @@
+name: ML Model CI
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - 'backend/app/ml/**'
+  pull_request:
+    branches: [ main ]
+    paths:
+      - 'backend/app/ml/**'
+
+jobs:
+  test_model:
+    name: Model Integrity Check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+
+      - name: Install ML infrastructure
+        run: |
+          pip install torch scikit-learn numpy pytest
+          pip install -r backend/requirements.txt
+
+      - name: Run model tests
+        run: |
+          cd backend
+          pytest tests/test_model.py -v
+
+      - name: Verify Training Completion
+        run: |
+          cd backend
+          # Run a quick training cycle to ensure logical consistency
+          python -m app.ml.model.train --epochs 1 --quick-test
+
+      - name: Audit Weight Serialization
+        run: |
+          # Verify that the model successfully generated a binary weight file
+          test -f backend/app/ml/model/weights/ddi_model.pt || (echo "❌ Model weights not found!" && exit 1)

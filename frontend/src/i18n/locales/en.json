@@ -1,0 +1,22 @@
+{
+  "app_name": "MedGuard AI",
+  "tagline": "Your Intelligent Multilingual Medical Companion",
+  "login": "Login",
+  "logout": "Logout",
+  "register": "Register",
+  "dashboard": "Dashboard",
+  "upload_prescription": "Upload Prescription",
+  "drug_interaction": "Drug Interactions",
+  "side_effects": "Side Effects",
+  "alternatives": "Safe Alternatives",
+  "chat_placeholder": "Describe your symptoms or ask about medications...",
+  "loading": "Processing your request...",
+  "error_generic": "Something went wrong. Please try again.",
+  "success_generic": "Operation completed successfully.",
+  "role_user": "Patient",
+  "role_admin": "Healthcare Professional",
+  "predict": "Analyze Health Data",
+  "result_safe": "No significant risks detected.",
+  "result_warning": "Minor concerns identified. Review recommended.",
+  "result_danger": "Critical interactions found! Consult a doctor immediately."
+}
