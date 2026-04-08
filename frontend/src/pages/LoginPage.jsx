@@ -48,14 +48,17 @@ const LoginPage = () => {
                     <FeatureRow 
                       icon={<ScanFace className="w-6 h-6 text-brand" />} 
                       text={t('upload_prescription')} 
+                      onClick={() => document.querySelector('.group.hover\\:shadow-xl')?.click()}
                     />
                     <FeatureRow 
                       icon={<ShieldCheck className="w-6 h-6 text-brand" />} 
                       text={t('drug_interaction')} 
+                      onClick={() => document.querySelector('.group.hover\\:shadow-xl')?.click()}
                     />
                     <FeatureRow 
                       icon={<MessageSquare className="w-6 h-6 text-brand" />} 
                       text={t('chat_placeholder').replace('...', '')} 
+                      onClick={() => document.querySelector('.group.hover\\:shadow-xl')?.click()}
                     />
                 </div>
                 
@@ -86,8 +89,11 @@ const LoginPage = () => {
 /**
  * Styled subcomponent for feature listing.
  */
-const FeatureRow = ({ icon, text }) => (
-    <div className="flex items-center gap-5 p-5 rounded-3xl bg-white border border-slate-100 shadow-sm hover:shadow-lg hover:border-brand/10 transition-all group overflow-hidden relative active:scale-95">
+const FeatureRow = ({ icon, text, onClick }) => (
+    <div 
+      onClick={onClick}
+      className="flex items-center gap-5 p-5 rounded-3xl bg-white border border-slate-100 shadow-sm hover:shadow-lg hover:border-brand/10 transition-all group overflow-hidden relative active:scale-95 cursor-pointer"
+    >
         <div className="p-3 bg-brand/5 rounded-2xl group-hover:bg-brand group-hover:text-white transition-colors">
             {React.cloneElement(icon, { className: 'w-6 h-6 transition-colors' })}
         </div>
