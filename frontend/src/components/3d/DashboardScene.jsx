@@ -1,3 +1,4 @@
+/* eslint-disable react/no-unknown-property */
 import React, { useRef, useMemo } from 'react'
 import { Canvas, useFrame } from '@react-three/fiber'
 import { 
@@ -9,7 +10,7 @@ import {
     PointMaterial,
     Points
 } from '@react-three/drei'
-import * as THREE from 'three'
+
 
 /**
  * Animated Molecular Lattice Unit.

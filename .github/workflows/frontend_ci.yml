@@ -16,6 +16,9 @@ jobs:
   test:
     name: Run Vitest Suite
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: bash
     steps:
       - uses: actions/checkout@v4
 
@@ -58,12 +61,13 @@ jobs:
           cd frontend
           npx vercel pull --yes --environment=production --token=${{ secrets.VERCEL_TOKEN }}
         shell: bash
-      - name: Build Project
+      - name: Build Project Artifacts
         run: |
           cd frontend
-          npm install --legacy-peer-deps
-          npm run build
+          npx vercel build --prod --token=${{ secrets.VERCEL_TOKEN }}
         shell: bash
+        env:
+          SHELL: /bin/bash
       - name: Deploy Project Artifacts to Vercel
         run: |
           cd frontend
