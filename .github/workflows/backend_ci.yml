@@ -35,6 +35,14 @@ jobs:
           pip install -r backend/requirements.txt
           pip install pytest pytest-asyncio pytest-cov httpx
 
+      - name: Initialize Database Indexes
+        env:
+          MONGO_URI: mongodb://localhost:27017/medguard_test
+        run: |
+          cd backend
+          export PYTHONPATH=$PYTHONPATH:.
+          python scripts/create_indexes.py
+
       - name: Run Clinical Tests
         env:
           MONGO_URI: mongodb://localhost:27017/medguard_test
@@ -42,6 +50,7 @@ jobs:
           ENVIRONMENT: test
         run: |
           cd backend
+          export PYTHONPATH=$PYTHONPATH:.
           pytest tests/ -v --tb=short --cov=app --cov-report=xml
 
       - name: Upload coverage to Codecov
