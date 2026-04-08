@@ -10,13 +10,13 @@ class Settings(BaseSettings):
     JWT_EXPIRE_MINUTES: int = 1440
     GOOGLE_CLIENT_ID: str
     GOOGLE_CLIENT_SECRET: str
-    AWS_ACCESS_KEY_ID: str
-    AWS_SECRET_ACCESS_KEY: str
-    S3_BUCKET: str
-    FIREBASE_CREDENTIALS: str
+    AWS_ACCESS_KEY_ID: str = ""
+    AWS_SECRET_ACCESS_KEY: str = ""
+    S3_BUCKET: str = ""
+    FIREBASE_CREDENTIALS: str = ""
     ENVIRONMENT: str = "development"
-    CORS_ORIGINS: str
-    ADMIN_EMAIL: EmailStr
+    CORS_ORIGINS: str = "*"
+    ADMIN_EMAIL: str = "admin@medguard.ai"
 
     model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8", extra="ignore")
 
