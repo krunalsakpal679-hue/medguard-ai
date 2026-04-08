@@ -5,6 +5,12 @@ import os
 # Smoke test configuration
 PROD_URL = os.getenv("PROD_API_URL", "https://medguard-api.onrender.com")
 
+# Skip these tests in CI unless we are explicitly testing production
+pytestmark = pytest.mark.skipif(
+    os.getenv("ENVIRONMENT") != "production" and os.getenv("PROD_TEST") != "true",
+    reason="Production health tests only run in production environment or when PROD_TEST=true"
+)
+
 @pytest.mark.asyncio
 async def test_production_health_endpoint():
     """

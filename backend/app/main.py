@@ -43,3 +43,21 @@ app.include_router(drugs_router, prefix="/api/v1")
 app.include_router(admin_router, prefix="/api/v1")
 app.include_router(reports_router, prefix="/api/v1")
 app.include_router(ws_router)
+
+@app.get("/health")
+async def health_check():
+    """Diagnostic heartbeat for production monitoring."""
+    from app.db.database import db_instance
+    db_status = False
+    try:
+        await db_instance.client.admin.command('ping')
+        db_status = True
+    except:
+        pass
+        
+    return {
+        "status": "ok",
+        "timestamp": datetime.now(timezone.utc),
+        "db_connected": db_status,
+        "environment": settings.ENVIRONMENT
+    }
