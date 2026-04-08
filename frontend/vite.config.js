@@ -22,12 +22,9 @@ export default defineConfig(({ mode }) => {
         build: {
             outDir: 'dist',
             sourcemap: !isProd,
-            minify: 'terser',
-            terserOptions: {
-                compress: {
-                    drop_console: isProd,
-                    drop_debugger: isProd,
-                },
+            minify: 'esbuild',
+            esbuild: {
+                drop: isProd ? ['console', 'debugger'] : [],
             },
             chunkSizeWarningLimit: 1000,
             rollupOptions: {
