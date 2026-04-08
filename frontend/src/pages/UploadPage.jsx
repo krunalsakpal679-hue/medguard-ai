@@ -24,7 +24,7 @@ const UploadPage = ({ navigate }) => {
     // State - Pipeline
     const [file, setFile] = useState(null)
     const [manualText, setManualText] = useState('')
-    const [step, setStep] = useState('idle') # idle, uploading, analyzing, results
+    const [step, setStep] = useState('idle') // idle, uploading, analyzing, results
     const [progress, setProgress] = useState(0)
     
     // State - Data
