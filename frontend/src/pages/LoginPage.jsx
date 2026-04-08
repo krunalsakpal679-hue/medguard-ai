@@ -1,7 +1,7 @@
 import React from 'react'
 import { useTranslation } from 'react-i18next'
 import GoogleLoginButton from '../components/auth/GoogleLoginButton'
-import { ShieldCheck, ScanFace, MessageSquareMore, Languages, Stethoscope } from 'lucide-react'
+import { ShieldCheck, ScanFace, MessageSquare, Stethoscope } from 'lucide-react'
 
 const LoginPage = () => {
     const { t, i18n } = useTranslation()
@@ -54,7 +54,7 @@ const LoginPage = () => {
                       text={t('drug_interaction')} 
                     />
                     <FeatureRow 
-                      icon={<MessageSquareMore className="w-6 h-6 text-brand" />} 
+                      icon={<MessageSquare className="w-6 h-6 text-brand" />} 
                       text={t('chat_placeholder').replace('...', '')} 
                     />
                 </div>
