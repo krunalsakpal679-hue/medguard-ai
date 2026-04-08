@@ -58,10 +58,11 @@ jobs:
           cd frontend
           npx vercel pull --yes --environment=production --token=${{ secrets.VERCEL_TOKEN }}
         shell: bash
-      - name: Build Project Artifacts
+      - name: Build Project
         run: |
           cd frontend
-          npx vercel build --prod --token=${{ secrets.VERCEL_TOKEN }}
+          npm install --legacy-peer-deps
+          npm run build
         shell: bash
       - name: Deploy Project Artifacts to Vercel
         run: |
