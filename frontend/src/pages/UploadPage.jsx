@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { 
     UploadCloud, 
@@ -20,6 +21,7 @@ import ExtractedDrugsList from '../components/upload/ExtractedDrugsList'
 
 const UploadPage = () => {
     const { token } = useAuthStore()
+    const navigate = useNavigate()
     
     // State - Pipeline
     const [file, setFile] = useState(null)
@@ -112,8 +114,11 @@ const UploadPage = () => {
     }
 
     const startCheck = () => {
-        // Navigate to prediction hub with selected drugs
-        console.log("Navigating to check for:", selectedDrugs)
+        if (selectedDrugs.length === 0) return
+        // Pass selected drug names to the Prediction page via route state
+        navigate('/predict', {
+            state: { preloadedDrugs: selectedDrugs.map(d => ({ id: d.name, name: d.name })) }
+        })
     }
 
     return (
