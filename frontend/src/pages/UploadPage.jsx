@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { 
-    CloudUpload, 
+    UploadCloud, 
     ShieldCheck, 
     FileText, 
     Search, 
     ArrowRight, 
     Activity, 
-    BrainCircuit,
+    Brain,
     Layers,
     Type,
     CheckCircle2,
@@ -107,7 +107,7 @@ const UploadPage = ({ navigate }) => {
                 <header className="mb-16">
                     <div className="flex items-center space-x-4 mb-4">
                         <div className="w-12 h-12 bg-indigo-600 rounded-2xl flex items-center justify-center text-white shadow-xl shadow-indigo-600/20">
-                            <CloudUpload size={28} />
+                            <UploadCloud size={28} />
                         </div>
                         <h1 className="text-4xl font-black text-slate-900 tracking-tight uppercase">Drug Capture</h1>
                     </div>
@@ -162,7 +162,7 @@ const UploadPage = ({ navigate }) => {
                                             animate={{ rotate: 360 }} transition={{ duration: 3, repeat: Infinity, ease: 'linear' }}
                                             className="w-32 h-32 rounded-[40px] border-4 border-dashed border-indigo-600 flex items-center justify-center p-8 bg-indigo-50/50"
                                         >
-                                            <BrainCircuit size={48} className="text-indigo-600 animate-pulse" />
+                                            <Brain size={48} className="text-indigo-600 animate-pulse" />
                                         </motion.div>
                                         <div className="absolute -top-4 -right-4 w-12 h-12 bg-white shadow-xl rounded-2xl border border-slate-100 flex items-center justify-center">
                                             <Activity size={24} className="text-emerald-500 animate-bounce" />

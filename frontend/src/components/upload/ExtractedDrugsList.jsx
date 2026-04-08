@@ -7,7 +7,7 @@ import {
     Trash2, 
     ShieldCheck, 
     Search,
-    BrainCircuit
+    Brain
 } from 'lucide-react'
 
 const ExtractedDrugsList = ({ 
@@ -52,7 +52,7 @@ const ExtractedDrugsList = ({
             <header className="flex justify-between items-end border-b border-slate-100 pb-4 pr-4">
                 <div>
                     <h3 className="text-sm font-black text-slate-950 uppercase tracking-widest mb-1 flex items-center">
-                        <BrainCircuit size={16} className="mr-3 text-indigo-600" />
+                        <Brain size={16} className="mr-3 text-indigo-600" />
                         AI Extraction Result
                     </h3>
                     <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest leading-none">Review and confirm medication trace</p>

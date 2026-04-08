@@ -1,6 +1,6 @@
 import React, { useState, useRef, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { CloudUpload, FileText, CheckCircle2, ShieldAlert, X } from 'lucide-react'
+import { UploadCloud, FileText, CheckCircle2, ShieldAlert, X } from 'lucide-react'
 
 const DropZone = ({ 
     onFileSelect, 
@@ -78,7 +78,7 @@ const DropZone = ({
                             className="flex flex-col items-center"
                         >
                             <div className="p-6 bg-slate-50 text-slate-300 rounded-full mb-6 group-hover:scale-110 group-hover:text-indigo-600 transition-all">
-                                <CloudUpload size={48} />
+                                <UploadCloud size={48} />
                             </div>
                             <h3 className="text-xl font-black text-slate-900 tracking-tight uppercase leading-none mb-2">Identify Asset</h3>
                             <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">Drag or browse clinical prescriptions (MAX 10MB)</p>
