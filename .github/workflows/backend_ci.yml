@@ -38,6 +38,15 @@ jobs:
       - name: Initialize Database Indexes
         env:
           MONGO_URI: mongodb://localhost:27017/medguard_test
+          SECRET_KEY: test-secret-key-at-least-thirty-two-chars
+          GOOGLE_CLIENT_ID: dummy
+          GOOGLE_CLIENT_SECRET: dummy
+          AWS_ACCESS_KEY_ID: dummy
+          AWS_SECRET_ACCESS_KEY: dummy
+          S3_BUCKET: dummy
+          FIREBASE_CREDENTIALS: '{"type": "service_account"}'
+          CORS_ORIGINS: http://localhost:3000
+          ADMIN_EMAIL: admin@test.com
         run: |
           cd backend
           export PYTHONPATH=$PYTHONPATH:.
@@ -46,7 +55,15 @@ jobs:
       - name: Run Clinical Tests
         env:
           MONGO_URI: mongodb://localhost:27017/medguard_test
-          SECRET_KEY: test-secret-key-not-for-prod
+          SECRET_KEY: test-secret-key-at-least-thirty-two-chars
+          GOOGLE_CLIENT_ID: dummy
+          GOOGLE_CLIENT_SECRET: dummy
+          AWS_ACCESS_KEY_ID: dummy
+          AWS_SECRET_ACCESS_KEY: dummy
+          S3_BUCKET: dummy
+          FIREBASE_CREDENTIALS: '{"type": "service_account"}'
+          CORS_ORIGINS: http://localhost:3000
+          ADMIN_EMAIL: admin@test.com
           ENVIRONMENT: test
         run: |
           cd backend
