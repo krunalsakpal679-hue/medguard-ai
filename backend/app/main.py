@@ -44,6 +44,16 @@ app.include_router(admin_router, prefix="/api/v1")
 app.include_router(reports_router, prefix="/api/v1")
 app.include_router(ws_router)
 
+@app.get("/")
+async def root():
+    """Tactical clinical landing page for system confirmation."""
+    return {
+        "title": "MedGuard AI Clinical Core",
+        "version": "1.0.0",
+        "status": "operational",
+        "documentation": "/docs"
+    }
+
 @app.get("/health")
 async def health_check():
     """Diagnostic heartbeat for production monitoring."""
