@@ -109,3 +109,34 @@ async def verify_external_token(token: str = Query(...)):
         "user_id": payload.get("sub"),
         "expires_at": datetime.fromtimestamp(payload.get("exp"), tz=timezone.utc)
     }
+
+@router.post("/test-token")
+async def create_test_token(db: AsyncIOMotorDatabase = Depends(get_db)):
+    """(Development Only) Creates a dummy user and returns a valid JWT for testing."""
+    if settings.ENVIRONMENT != "development":
+        raise HTTPException(status_code=403, detail="Not permitted in production")
+    
+    test_user_data = {
+        "google_id": "test_user_123",
+        "email": "test@medguard.ai",
+        "full_name": "Integration Test User",
+        "role": "user",
+        "is_active": True,
+        "created_at": datetime.utcnow()
+    }
+    
+    user = await db.users.find_one({"google_id": "test_user_123"})
+    if not user:
+        result = await db.users.insert_one(test_user_data)
+        user_id = str(result.inserted_id)
+        role = "user"
+    else:
+        user_id = str(user["_id"])
+        role = user["role"]
+        
+    token = create_access_token(data={"sub": user_id, "role": role})
+    return {
+        "access_token": token,
+        "token_type": "bearer",
+        "user_id": user_id
+    }
