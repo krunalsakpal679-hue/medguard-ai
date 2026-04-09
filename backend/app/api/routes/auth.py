@@ -60,6 +60,64 @@ async def google_auth(request: GoogleLoginRequest, db: AsyncIOMotorDatabase = De
     except Exception as e:
         raise HTTPException(status_code=500, detail="Internal authentication error")
 
+class RegisterRequest(BaseModel):
+    name: str
+    email: EmailStr
+    password: str
+    role: Optional[str] = "user"
+
+from passlib.context import CryptContext
+pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+
+@router.post("/register", response_model=TokenResponse)
+async def register(request: RegisterRequest, db: AsyncIOMotorDatabase = Depends(get_db)):
+    # Check if email exists
+    if await db.users.find_one({"email": request.email}):
+        raise HTTPException(status_code=400, detail="Email already registered")
+        
+    hashed_password = pwd_context.hash(request.password)
+    user_role = UserRole.ADMIN if request.role == "admin" else UserRole.USER
+    
+    user_dict = {
+        "email": request.email,
+        "full_name": request.name,
+        "role": user_role,
+        "is_active": True,
+        "created_at": datetime.now(timezone.utc),
+        "last_login": datetime.now(timezone.utc),
+        "prediction_count": 0,
+        "hashed_password": hashed_password
+    }
+    result = await db.users.insert_one(user_dict)
+    user_dict["_id"] = result.inserted_id
+    
+    user = UserInDB(**user_dict)
+    jti = str(uuid.uuid4())
+    access_token = create_access_token(data={"sub": str(user.id), "jti": jti, "role": user.role})
+    
+    return {"access_token": access_token, "token_type": "bearer", "user": user}
+
+class LoginRequest(BaseModel):
+    email: EmailStr
+    password: str
+
+@router.post("/login", response_model=TokenResponse)
+async def login(request: LoginRequest, db: AsyncIOMotorDatabase = Depends(get_db)):
+    user_data = await db.users.find_one({"email": request.email})
+    if not user_data or not user_data.get("hashed_password"):
+        raise HTTPException(status_code=401, detail="Invalid email or password")
+        
+    if not pwd_context.verify(request.password, user_data.get("hashed_password")):
+        raise HTTPException(status_code=401, detail="Invalid email or password")
+        
+    user = UserInDB(**user_data)
+    await auth_service.update_last_login(db, user.id)
+    
+    jti = str(uuid.uuid4())
+    access_token = create_access_token(data={"sub": str(user.id), "jti": jti, "role": user.role})
+    
+    return {"access_token": access_token, "token_type": "bearer", "user": user}
+
 @router.get("/me", response_model=UserResponse)
 async def get_me(current_user: UserInDB = Depends(get_current_active_user)):
     """(Authorized) Retrieve the currently logged-in user profile."""

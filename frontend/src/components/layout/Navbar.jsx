@@ -77,13 +77,13 @@ const Navbar = () => {
 
                     <div className="h-8 w-px bg-slate-100 hidden sm:block" />
 
-                    {/* User Profile Dropdown Placeholder */}
+                    {/* User Profile */}
                     <div className="relative group">
-                        <button className="flex items-center gap-2 p-1 rounded-full border border-slate-200 hover:border-indigo-300 transition-all">
+                        <Link to="/profile" className="flex items-center gap-2 p-1 rounded-full border border-slate-200 hover:border-indigo-300 transition-all cursor-pointer">
                             <div className="w-8 h-8 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-600">
                                 <User size={18} />
                             </div>
-                        </button>
+                        </Link>
                     </div>
 
                     {/* Mobile Hamburger */}

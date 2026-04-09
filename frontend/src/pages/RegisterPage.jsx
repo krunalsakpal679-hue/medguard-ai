@@ -8,7 +8,7 @@ const RegisterPage = () => {
     const navigate = useNavigate()
     const { setAuth } = useAuthStore()
 
-    const [form, setForm] = useState({ name: '', email: '', password: '' })
+    const [form, setForm] = useState({ name: '', email: '', password: '', role: 'user' })
     const [loading, setLoading] = useState(false)
     const [error, setError] = useState('')
     const [success, setSuccess] = useState(false)
@@ -31,7 +31,7 @@ const RegisterPage = () => {
             const res = await fetch(`${import.meta.env.VITE_API_URL || 'https://medguard-ai-898m.onrender.com'}/auth/register`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ name: form.name, email: form.email, password: form.password })
+                body: JSON.stringify({ name: form.name, email: form.email, password: form.password, role: form.role })
             })
             if (res.ok) {
                 const data = await res.json()
@@ -101,6 +101,26 @@ const RegisterPage = () => {
                         ⚠ {error}
                     </div>
                 )}
+
+                {/* Tabs */}
+                <div className="flex gap-2 mb-6 p-1 bg-slate-100 rounded-xl relative">
+                    <button
+                        onClick={() => setForm(prev => ({ ...prev, role: 'user' }))}
+                        className={`flex-1 py-2 text-xs font-bold uppercase tracking-widest rounded-lg transition-all z-10 ${
+                            form.role === 'user' ? 'bg-white shadow-sm text-indigo-600' : 'text-slate-500 hover:text-slate-700'
+                        }`}
+                    >
+                        Patient / User
+                    </button>
+                    <button
+                        onClick={() => setForm(prev => ({ ...prev, role: 'admin' }))}
+                        className={`flex-1 py-2 text-xs font-bold uppercase tracking-widest rounded-lg transition-all z-10 ${
+                            form.role === 'admin' ? 'bg-white shadow-sm text-indigo-600' : 'text-slate-500 hover:text-slate-700'
+                        }`}
+                    >
+                        Admin
+                    </button>
+                </div>
 
                 {/* Form */}
                 <form onSubmit={handleSubmit} className="space-y-4">

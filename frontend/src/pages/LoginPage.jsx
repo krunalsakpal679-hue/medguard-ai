@@ -87,13 +87,44 @@ const LoginPage = () => {
                     
                     <div className="flex items-center gap-4 py-2">
                         <div className="flex-1 h-[1px] bg-slate-100" />
-                        <span className="text-[10px] font-black text-slate-300 uppercase tracking-widest">Or</span>
+                        <span className="text-[10px] font-black text-slate-300 uppercase tracking-widest">Or login with Email</span>
                         <div className="flex-1 h-[1px] bg-slate-100" />
                     </div>
 
+                    <form onSubmit={async (e) => {
+                        e.preventDefault()
+                        try {
+                            const res = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:8000/api/v1'}/auth/login`, {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({ email: e.target.email.value, password: e.target.password.value })
+                            })
+                            if (res.ok) {
+                                const data = await res.json()
+                                setAuth(data.user, data.access_token)
+                                navigate('/dashboard')
+                            } else {
+                                alert("Login failed. Check your credentials.")
+                            }
+                        } catch (err) {
+                            console.error(err)
+                            alert("Login failed due to an error.")
+                        }
+                    }} className="space-y-4">
+                        <div className="relative group">
+                            <input type="email" name="email" placeholder="Medical Email" className="w-full px-4 py-3 bg-slate-50 border border-slate-100 rounded-xl text-sm font-semibold text-slate-800 focus:ring-2 focus:ring-brand focus:outline-none" required />
+                        </div>
+                        <div className="relative group">
+                            <input type="password" name="password" placeholder="Password" className="w-full px-4 py-3 bg-slate-50 border border-slate-100 rounded-xl text-sm font-semibold text-slate-800 focus:ring-2 focus:ring-brand focus:outline-none" required />
+                        </div>
+                        <button type="submit" className="w-full py-4 text-white text-xs font-bold uppercase tracking-widest bg-brand rounded-2xl hover:bg-brand/90 transition-all shadow-lg shadow-brand/20">
+                            Access Dashboard
+                        </button>
+                    </form>
+
                     <button 
                         onClick={handleGuestLogin}
-                        className="w-full py-5 rounded-2xl bg-slate-50 border border-slate-100 text-slate-600 font-bold uppercase tracking-widest text-xs hover:bg-slate-100 hover:border-slate-200 transition-all active:scale-95 flex items-center justify-center gap-3"
+                        className="w-full py-4 rounded-2xl bg-slate-50 border border-slate-100 text-slate-600 font-bold uppercase tracking-widest text-xs hover:bg-slate-100 hover:border-slate-200 transition-all flex items-center justify-center gap-3"
                     >
                         <UserCheck className="w-4 h-4" />
                         Continue as Medical Guest

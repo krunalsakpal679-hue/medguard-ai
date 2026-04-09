@@ -20,6 +20,8 @@ from app.api.routes.admin import router as admin_router
 from app.api.routes.reports import router as reports_router
 from app.api.routes.websocket import router as ws_router
 
+from app.api.routes.auth import router as auth_router
+
 app = FastAPI(title="MedGuard AI Clinical API", version="1.0.0")
 
 # Security Chain (Order is critical)
@@ -38,10 +40,18 @@ app.add_middleware(
 
 setup_error_handlers(app)
 
+from app.api.routes.chat import router as chat_router
+from app.api.routes.predictions import router as predictions_router
+from app.api.routes.upload import router as upload_router
+
 # Sub-routers
 app.include_router(drugs_router, prefix="/api/v1")
 app.include_router(admin_router, prefix="/api/v1")
 app.include_router(reports_router, prefix="/api/v1")
+app.include_router(auth_router, prefix="/api/v1")
+app.include_router(chat_router, prefix="/api/v1")
+app.include_router(predictions_router, prefix="/api/v1")
+app.include_router(upload_router, prefix="/api/v1")
 app.include_router(ws_router)
 
 @app.get("/")

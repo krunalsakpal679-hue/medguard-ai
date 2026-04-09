@@ -26,12 +26,14 @@ class UserBase(BaseModel):
     )
 
 class UserCreate(UserBase):
-    google_id: str
+    google_id: Optional[str] = None
+    password: Optional[str] = None
     role: UserRole = UserRole.USER
 
 class UserInDB(UserBase):
     id: PyObjectId = Field(alias="_id")
-    google_id: str
+    google_id: Optional[str] = None
+    hashed_password: Optional[str] = None
     role: UserRole
     is_active: bool = True
     created_at: datetime = Field(default_factory=datetime.utcnow)
