@@ -10,14 +10,8 @@ from app.core.config import settings
 from app.core.security import create_access_token, get_current_active_user, verify_token
 from app.services import auth_service
 from app.db.database import get_db
-from app.models.user import UserInDB, UserResponse
+from app.models.user import UserInDB, UserResponse, UserRole
 from motor.motor_asyncio import AsyncIOMotorDatabase
-
-from enum import Enum
-
-class UserRole(str, Enum):
-    USER = "user"
-    ADMIN = "admin"
 
 router = APIRouter(prefix="/auth", tags=["authentication"])
 

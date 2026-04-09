@@ -8,6 +8,24 @@ export const useAuthStore = create((set) => ({
     isLoading: false,
     error: null,
 
+    login: async (email, password) => {
+        set({ isLoading: true, error: null });
+        try {
+            const { data } = await api.post('/auth/login', { email, password });
+            localStorage.setItem('medguard_token', data.access_token);
+            set({ 
+                user: data.user, 
+                token: data.access_token, 
+                isAuthenticated: true, 
+                isLoading: false 
+            });
+            return true;
+        } catch (err) {
+            set({ error: err.response?.data?.detail || "Login Failed", isLoading: false });
+            return false;
+        }
+    },
+
     loginWithGoogle: async (googleToken) => {
         set({ isLoading: true, error: null });
         try {
@@ -21,7 +39,7 @@ export const useAuthStore = create((set) => ({
             });
             return true;
         } catch (err) {
-            set({ error: err.response?.data?.error || "Login Failed", isLoading: false });
+            set({ error: err.response?.data?.detail || err.response?.data?.error || "Login Failed", isLoading: false });
             return false;
         }
     },
@@ -39,7 +57,7 @@ export const useAuthStore = create((set) => ({
             });
             return true;
         } catch (err) {
-            set({ error: err.response?.data?.error || "Registration Failed", isLoading: false });
+            set({ error: err.response?.data?.detail || err.response?.data?.error || "Registration Failed", isLoading: false });
             return false;
         }
     },
