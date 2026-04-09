@@ -68,9 +68,12 @@ async def root():
 
 @app.get("/health")
 async def health():
+    from app.db.database import db_instance
+    db_status = "connected" if db_instance.db is not None else "disconnected"
     return {
-        "status": "healthy",
+        "status": "healthy" if db_status == "connected" else "degraded",
         "version": "1.0.0",
+        "database": db_status,
         "environment": settings.ENVIRONMENT,
         "timestamp": int(time.time())
     }
