@@ -3,7 +3,7 @@ import * as SecureStore from 'expo-secure-store'
 import Constants from 'expo-constants'
 
 // Base URL configuration favoring Expo extra constants for dynamic multi-platform development
-const API_BASE = Constants.expoConfig?.extra?.apiUrl || 'http://localhost:8000/api/v1'
+const API_BASE = Constants.expoConfig?.extra?.apiUrl || 'https://medguard-ai-898m.onrender.com/api/v1'
 
 const api = axios.create({
     baseURL: API_BASE,

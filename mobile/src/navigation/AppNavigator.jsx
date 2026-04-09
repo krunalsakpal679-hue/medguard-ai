@@ -13,7 +13,12 @@ const Placeholder = ({ name }) => (
 )
 
 import LoginScreen from '../screens/auth/LoginScreen'
+import HomeScreen from '../screens/main/HomeScreen'
 import UploadScreen from '../screens/main/UploadScreen'
+import HistoryScreen from '../screens/main/HistoryScreen'
+import ProfileScreen from '../screens/main/ProfileScreen'
+import ChatScreen from '../screens/main/ChatScreen'
+import ResultScreen from '../screens/main/ResultScreen'
 
 const Stack = createStackNavigator()
 const Tab = createBottomTabNavigator()
@@ -27,10 +32,17 @@ const MainTabs = () => {
             screenOptions={({ route }) => ({
                 tabBarIcon: ({ focused, color, size }) => {
                     let iconName;
-                    if (route.name === 'Dashboard') return <Home size={size} color={color} />
-                    if (route.name === 'Scan') return <Camera size={size} color={color} />
-                    if (route.name === 'History') return <Clock size={size} color={color} />
-                    if (route.name === 'Profile') return <User size={size} color={color} />
+                    if (focused) {
+                        if (route.name === 'Dashboard') return <Home size={size} color={color} />
+                        if (route.name === 'Scan') return <Camera size={size} color={color} />
+                        if (route.name === 'History') return <Clock size={size} color={color} />
+                        if (route.name === 'Profile') return <User size={size} color={color} />
+                    } else {
+                        if (route.name === 'Dashboard') return <Home size={size} color={color} opacity={0.5} />
+                        if (route.name === 'Scan') return <Camera size={size} color={color} opacity={0.5} />
+                        if (route.name === 'History') return <Clock size={size} color={color} opacity={0.5} />
+                        if (route.name === 'Profile') return <User size={size} color={color} opacity={0.5} />
+                    }
                 },
                 tabBarActiveTintColor: '#2E7D32',
                 tabBarInactiveTintColor: '#9E9E9E',
@@ -39,7 +51,7 @@ const MainTabs = () => {
                 headerShown: false,
             })}
         >
-            <Tab.Screen name="Dashboard" component={() => <Placeholder name="Dashboard" />} />
+            <Tab.Screen name="Dashboard" component={HomeScreen} />
             <Tab.Screen 
               name="Scan" 
               component={UploadScreen} 
@@ -48,8 +60,8 @@ const MainTabs = () => {
                   tabBarBadgeStyle: styles.tabBadge
               }}
             />
-            <Tab.Screen name="History" component={() => <Placeholder name="Interaction Logs" />} />
-            <Tab.Screen name="Profile" component={() => <Placeholder name="Clinical Profile" />} />
+            <Tab.Screen name="History" component={HistoryScreen} />
+            <Tab.Screen name="Profile" component={ProfileScreen} />
         </Tab.Navigator>
     )
 }
@@ -65,7 +77,11 @@ const AppNavigator = () => {
             {!isAuthenticated ? (
                 <Stack.Screen name="Login" component={LoginScreen} />
             ) : (
-                <Stack.Screen name="Main" component={MainTabs} />
+                <>
+                    <Stack.Screen name="Main" component={MainTabs} />
+                    <Stack.Screen name="Chat" component={ChatScreen} />
+                    <Stack.Screen name="Result" component={ResultScreen} />
+                </>
             )}
         </Stack.Navigator>
     )

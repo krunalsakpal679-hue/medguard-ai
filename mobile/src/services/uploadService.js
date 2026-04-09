@@ -3,7 +3,7 @@ import * as DocumentPicker from 'expo-document-picker'
 import axios from 'axios'
 import Constants from 'expo-constants'
 
-const API_BASE = Constants.expoConfig?.extra?.apiUrl || 'http://localhost:8000/api/v1'
+const API_BASE = Constants.expoConfig?.extra?.apiUrl || 'https://medguard-ai-898m.onrender.com/api/v1'
 
 export const uploadService = {
     /**

@@ -1,83 +1,90 @@
-from contextlib import asynccontextmanager
-from datetime import datetime, timezone
-from fastapi import FastAPI, Request, HTTPException
+import time
+from fastapi import FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
-from motor.motor_asyncio import AsyncIOMotorClient
-
+from contextlib import asynccontextmanager
 from app.core.config import settings
 from app.core.logger import logger
+from app.db.database import connect_db, close_db
 
-from app.api.middleware.error_handler import setup_error_handlers
-from app.api.middleware.security import (
-    RateLimitMiddleware, 
-    SecurityHeadersMiddleware, 
-    RequestSizeLimitMiddleware
+# Safe Router Imports
+try:
+    from app.api.routes.auth import router as auth_router
+    from app.api.routes.drugs import router as drugs_router
+    from app.api.routes.predictions import router as predictions_router
+    from app.api.routes.admin import router as admin_router
+    from app.api.routes.upload import router as upload_router
+    from app.api.routes.chat import router as chat_router
+    ROUTERS_AVAILABLE = True
+except ImportError as e:
+    logger.error(f"Critical Path Error: {e}")
+    ROUTERS_AVAILABLE = False
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    logger.info("Initializing MedGuard API Ecosystem...")
+    try:
+        await connect_db()
+    except Exception as e:
+        logger.warning(f"Database unavailable on startup: {e}")
+    yield
+    await close_db()
+    logger.info("System shutting down...")
+
+app = FastAPI(
+    title=settings.PROJECT_NAME,
+    lifespan=lifespan,
+    docs_url="/api/v1/docs",
+    redoc_url="/api/v1/redoc"
 )
 
-from app.api.routes.drugs import router as drugs_router
-from app.api.routes.admin import router as admin_router
-from app.api.routes.reports import router as reports_router
-from app.api.routes.websocket import router as ws_router
-
-from app.api.routes.auth import router as auth_router
-
-app = FastAPI(title="MedGuard AI Clinical API", version="1.0.0")
-
-# Security Chain (Order is critical)
-app.add_middleware(SecurityHeadersMiddleware)
-app.add_middleware(RequestSizeLimitMiddleware)
-app.add_middleware(RateLimitMiddleware)
-
-# CORS configuration
+# CORS
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=settings.CORS_ORIGINS_LIST,
+    allow_origins=settings.cors_origins_list,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-setup_error_handlers(app)
-
-from app.api.routes.chat import router as chat_router
-from app.api.routes.predictions import router as predictions_router
-from app.api.routes.upload import router as upload_router
-
-# Sub-routers
-app.include_router(drugs_router, prefix="/api/v1")
-app.include_router(admin_router, prefix="/api/v1")
-app.include_router(reports_router, prefix="/api/v1")
-app.include_router(auth_router, prefix="/api/v1")
-app.include_router(chat_router, prefix="/api/v1")
-app.include_router(predictions_router, prefix="/api/v1")
-app.include_router(upload_router, prefix="/api/v1")
-app.include_router(ws_router)
+# Internal Routing
+if ROUTERS_AVAILABLE:
+    app.include_router(auth_router, prefix="/api/v1/auth", tags=["Identity"])
+    app.include_router(drugs_router, prefix="/api/v1/drugs", tags=["Pharmacology"])
+    app.include_router(predictions_router, prefix="/api/v1/predictions", tags=["Analytics"])
+    app.include_router(admin_router, prefix="/api/v1/admin", tags=["Control Plane"])
+    app.include_router(upload_router, prefix="/api/v1/upload", tags=["Ingestion"])
+    app.include_router(chat_router, prefix="/api/v1/chat", tags=["Assistance"])
 
 @app.get("/")
 async def root():
-    """Tactical clinical landing page for system confirmation."""
     return {
-        "title": "MedGuard AI Clinical Core",
-        "version": "1.0.0",
-        "status": "operational",
-        "documentation": "/docs"
+        "app": settings.PROJECT_NAME,
+        "docs": "/api/v1/docs",
+        "health": "/health",
+        "timestamp": int(time.time())
     }
 
 @app.get("/health")
-async def health_check():
-    """Diagnostic heartbeat for production monitoring."""
-    from app.db.database import db_instance
-    db_status = False
-    try:
-        await db_instance.client.admin.command('ping')
-        db_status = True
-    except:
-        pass
-        
+async def health():
     return {
-        "status": "ok",
-        "timestamp": datetime.now(timezone.utc),
-        "db_connected": db_status,
-        "environment": settings.ENVIRONMENT
+        "status": "healthy",
+        "version": "1.0.0",
+        "environment": settings.ENVIRONMENT,
+        "timestamp": int(time.time())
     }
+
+@app.exception_handler(HTTPException)
+async def http_exception_handler(request: Request, exc: HTTPException):
+    return JSONResponse(
+        status_code=exc.status_code,
+        content={"error": exc.detail, "path": request.url.path}
+    )
+
+@app.exception_handler(Exception)
+async def global_exception_handler(request: Request, exc: Exception):
+    logger.error(f"Unhandled Exception: {exc}")
+    return JSONResponse(
+        status_code=500,
+        content={"error": "Internal Clinical Error", "detail": str(exc)}
+    )

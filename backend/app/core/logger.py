@@ -1,36 +1,42 @@
+import os
 import sys
 from loguru import logger
 from app.core.config import settings
 
-def setup_logger():
-    # Remove default handler
+def setup_logging():
+    # Ensure log directory
+    log_dir = "logs"
+    if not os.path.exists(log_dir):
+        os.makedirs(log_dir)
+
+    # Clear default
     logger.remove()
 
-    # Console handler
-    log_level = "WARNING" if settings.ENVIRONMENT == "production" else "INFO"
-    custom_format = "{time:YYYY-MM-DD HH:mm:ss} | {level} | {name}:{line} | {message}"
-
+    # Console output level mapping
+    log_level = "DEBUG" if settings.ENVIRONMENT == "development" else "INFO"
+    
+    # Console Handler
     logger.add(
-        sys.stdout,
-        level=log_level,
-        format=custom_format,
-        colorize=True
+        sys.stdout, 
+        format="<green>{time:YYYY-MM-DD HH:mm:ss}</green> | <level>{level: <8}</level> | <cyan>{name}</cyan>:<cyan>{line}</cyan> - <level>{message}</level>",
+        level=log_level
     )
 
-    # File handler for all logs
+    # File Handler (all logs)
     logger.add(
         "logs/app.log",
         rotation="10 MB",
         retention="30 days",
-        format=custom_format,
-        level="INFO"
+        level="INFO",
+        compression="zip"
     )
 
-    # File handler for errors
+    # Error Handler
     logger.add(
         "logs/errors.log",
-        format=custom_format,
-        level="ERROR"
+        level="ERROR",
+        backtrace=True,
+        diagnose=True
     )
 
-setup_logger()
+setup_logging()

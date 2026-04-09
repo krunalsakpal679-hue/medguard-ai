@@ -1,34 +1,42 @@
-from functools import cached_property
-from typing import List
-from pydantic_settings import BaseSettings, SettingsConfigDict
-from pydantic import EmailStr, field_validator
+from typing import List, Optional
+from pydantic_settings import BaseSettings
+from pydantic import Field
 
 class Settings(BaseSettings):
-    MONGO_URI: str
-    SECRET_KEY: str
-    ALGORITHM: str = "HS256"
-    JWT_EXPIRE_MINUTES: int = 1440
-    GOOGLE_CLIENT_ID: str
-    GOOGLE_CLIENT_SECRET: str
-    AWS_ACCESS_KEY_ID: str = ""
-    AWS_SECRET_ACCESS_KEY: str = ""
-    S3_BUCKET: str = ""
-    FIREBASE_CREDENTIALS: str = ""
+    # Base
     ENVIRONMENT: str = "development"
-    CORS_ORIGINS: str = "*"
-    ADMIN_EMAIL: str = "admin@medguard.ai"
+    PROJECT_NAME: str = "MedGuard AI"
+    
+    # Database
+    MONGO_URI: str = "mongodb://localhost:27017/medguard"
+    
+    # Security
+    SECRET_KEY: str = "medguard_internal_super_secret_key_898m"
+    ALGORITHM: str = "HS256"
+    JWT_EXPIRE_MINUTES: int = 60 * 24 * 7  # 1 week
+    
+    # OAuth
+    GOOGLE_CLIENT_ID: str = ""
+    GOOGLE_CLIENT_SECRET: str = ""
+    
+    # Infrastructure
+    CORS_ORIGINS: str = "http://localhost:3000,http://localhost:5173"
+    STORAGE_PROVIDER: str = "local" # local, s3, firebase
+    
+    # Optional Cloud Providers
+    AWS_ACCESS_KEY_ID: Optional[str] = None
+    AWS_SECRET_ACCESS_KEY: Optional[str] = None
+    AWS_REGION: Optional[str] = "us-east-1"
+    S3_BUCKET: Optional[str] = "medguard-assets"
+    FIREBASE_CREDENTIALS: Optional[str] = None
 
-    model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8", extra="ignore")
+    @property
+    def cors_origins_list(self) -> List[str]:
+        return [o.strip() for o in self.CORS_ORIGINS.split(",") if o.strip()]
 
-    @field_validator("SECRET_KEY")
-    @classmethod
-    def validate_secret_key_length(cls, v: str) -> str:
-        if len(v) < 32:
-            raise ValueError("SECRET_KEY must be at least 32 characters long")
-        return v
-
-    @cached_property
-    def CORS_ORIGINS_LIST(self) -> List[str]:
-        return [origin.strip() for origin in self.CORS_ORIGINS.split(",") if origin.strip()]
+    model_config = {
+        "env_file": ".env",
+        "extra": "ignore"
+    }
 
 settings = Settings()

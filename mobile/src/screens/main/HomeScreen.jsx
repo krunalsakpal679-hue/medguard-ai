@@ -93,8 +93,8 @@ const HomeScreen = ({ navigation }) => {
 
                 {/* Quick Actions Grid */}
                 <View style={styles.grid}>
-                    <QuickAction icon={Camera} title="Scan Rx" route="Upload" color="#6366f1" />
-                    <QuickAction icon={FlaskConical} title="Check Drugs" route="Interaction" color="#ec4899" />
+                    <QuickAction icon={Camera} title="Scan Rx" route="Scan" color="#6366f1" />
+                    <QuickAction icon={FlaskConical} title="Check Drugs" route="Scan" color="#ec4899" />
                     <QuickAction icon={MessageSquare} title="Ask AI" route="Chat" color="#14b8a6" />
                     <QuickAction icon={History} title="History" route="History" color="#f59e0b" />
                 </View>
