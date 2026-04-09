@@ -23,6 +23,13 @@ def create_access_token(data: dict, expires_delta: Optional[timedelta] = None) -
     # Standard claims (sub: user_id, exp: expiration, jti: unique id)
     to_encode.update({"exp": expire, "iat": datetime.now(timezone.utc)})
     
+    # Ensure all values are JSON serializable (handle Enums)
+    for key, value in to_encode.items():
+        if hasattr(value, "value"): # Check for Enum
+            to_encode[key] = value.value
+        elif isinstance(value, datetime):
+            to_encode[key] = int(value.timestamp())
+    
     encoded_jwt = jwt.encode(to_encode, settings.SECRET_KEY, algorithm=settings.ALGORITHM)
     return encoded_jwt
 

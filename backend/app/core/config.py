@@ -22,7 +22,7 @@ class Settings(BaseSettings):
     HUGGINGFACE_API_KEY: Optional[str] = None
     
     # Infrastructure
-    CORS_ORIGINS: str = "*"
+    CORS_ORIGINS: str = "https://medguard-ai-seven.vercel.app,http://localhost:5173,http://localhost:3000"
     STORAGE_PROVIDER: str = "local" # local, s3, firebase
     
     # Optional Cloud Providers
