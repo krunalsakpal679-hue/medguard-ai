@@ -7,18 +7,13 @@ from app.core.config import settings
 from app.core.logger import logger
 from app.db.database import connect_db, close_db
 
-# Safe Router Imports
-try:
-    from app.api.routes.auth import router as auth_router
-    from app.api.routes.drugs import router as drugs_router
-    from app.api.routes.predictions import router as predictions_router
-    from app.api.routes.admin import router as admin_router
-    from app.api.routes.upload import router as upload_router
-    from app.api.routes.chat import router as chat_router
-    ROUTERS_AVAILABLE = True
-except ImportError as e:
-    logger.error(f"Critical Path Error: {e}")
-    ROUTERS_AVAILABLE = False
+# Clinical Router Orchestration
+from app.api.routes.auth import router as auth_router
+from app.api.routes.drugs import router as drugs_router
+from app.api.routes.predictions import router as predictions_router
+from app.api.routes.admin import router as admin_router
+from app.api.routes.upload import router as upload_router
+from app.api.routes.chat import router as chat_router
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -47,14 +42,13 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Internal Routing
-if ROUTERS_AVAILABLE:
-    app.include_router(auth_router, prefix="/api/v1/auth", tags=["Identity"])
-    app.include_router(drugs_router, prefix="/api/v1/drugs", tags=["Pharmacology"])
-    app.include_router(predictions_router, prefix="/api/v1/predictions", tags=["Analytics"])
-    app.include_router(admin_router, prefix="/api/v1/admin", tags=["Control Plane"])
-    app.include_router(upload_router, prefix="/api/v1/upload", tags=["Ingestion"])
-    app.include_router(chat_router, prefix="/api/v1/chat", tags=["Assistance"])
+# Internal Routing Integration
+app.include_router(auth_router, prefix="/api/v1/auth", tags=["Identity"])
+app.include_router(drugs_router, prefix="/api/v1/drugs", tags=["Pharmacology"])
+app.include_router(predictions_router, prefix="/api/v1/predictions", tags=["Analytics"])
+app.include_router(admin_router, prefix="/api/v1/admin", tags=["Control Plane"])
+app.include_router(upload_router, prefix="/api/v1/upload", tags=["Ingestion"])
+app.include_router(chat_router, prefix="/api/v1/chat", tags=["Assistance"])
 
 @app.get("/")
 async def root():
