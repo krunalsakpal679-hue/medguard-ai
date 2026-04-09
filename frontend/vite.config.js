@@ -29,11 +29,12 @@ export default defineConfig(({ mode }) => {
             chunkSizeWarningLimit: 1000,
             rollupOptions: {
                 output: {
-                    manualChunks: {
-                        'vendor': ['react', 'react-dom', 'react-router-dom'],
-                        'three-tier': ['three', '@react-three/fiber', '@react-three/drei'],
-                        'query-engine': ['@tanstack/react-query'],
-                        'ui-core': ['framer-motion', 'lucide-react'],
+                    manualChunks: (id) => {
+                        if (id.includes('node_modules')) {
+                            if (id.includes('three') || id.includes('@react-three')) return 'vendor-3d';
+                            if (id.includes('framer-motion') || id.includes('lucide-react')) return 'vendor-ui';
+                            return 'vendor';
+                        }
                     },
                 },
             },

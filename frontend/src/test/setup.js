@@ -3,6 +3,16 @@ import { beforeAll, afterEach, afterAll } from 'vitest'
 import { setupServer } from 'msw/node'
 import { handlers } from './mocks/handlers'
 
+// Mock Vite environment variables for testing
+if (typeof import.meta.env === 'undefined') {
+  import.meta.env = {
+    VITE_API_URL: 'http://localhost:8000/api/v1',
+    VITE_GOOGLE_CLIENT_ID: 'mock_client_id',
+    VITE_ENVIRONMENT: 'testing',
+    DEV: true,
+  }
+}
+
 // Initialize the Mock Service Worker server with clinical handlers
 export const server = setupServer(...handlers)
 
