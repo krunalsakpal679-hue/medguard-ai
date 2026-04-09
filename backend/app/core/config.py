@@ -4,7 +4,7 @@ from pydantic import Field
 
 class Settings(BaseSettings):
     # Base
-    ENVIRONMENT: str = "development"
+    ENVIRONMENT: str = "production"
     PROJECT_NAME: str = "MedGuard AI"
     
     # Database
@@ -20,7 +20,7 @@ class Settings(BaseSettings):
     GOOGLE_CLIENT_SECRET: str = ""
     
     # Infrastructure
-    CORS_ORIGINS: str = "http://localhost:3000,http://localhost:5173"
+    CORS_ORIGINS: str = "*"
     STORAGE_PROVIDER: str = "local" # local, s3, firebase
     
     # Optional Cloud Providers

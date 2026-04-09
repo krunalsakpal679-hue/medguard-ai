@@ -39,7 +39,7 @@ jobs:
         working-directory: frontend
         run: npm test -- --run
         env:
-          VITE_API_URL: "http://localhost:8000/api/v1"
+          VITE_API_URL: "https://medguard-ai-898m.onrender.com/api/v1"
           VITE_ENVIRONMENT: "testing"
         continue-on-error: true
 
