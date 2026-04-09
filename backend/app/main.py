@@ -51,20 +51,20 @@ app.add_middleware(
 
 # Internal Routing Integration
 # Primary (v1)
-app.include_router(auth_router, prefix="/v1/auth", tags=["Identity"])
-app.include_router(drugs_router, prefix="/v1/drugs", tags=["Pharmacology"])
-app.include_router(predictions_router, prefix="/v1/predictions", tags=["Analytics"])
-app.include_router(admin_router, prefix="/v1/admin", tags=["Control Plane"])
-app.include_router(upload_router, prefix="/v1/upload", tags=["Ingestion"])
-app.include_router(chat_router, prefix="/v1/chat", tags=["Assistance"])
+app.include_router(auth_router, prefix="/v1", tags=["Identity"])
+app.include_router(drugs_router, prefix="/v1", tags=["Pharmacology"])
+app.include_router(predictions_router, prefix="/v1", tags=["Analytics"])
+app.include_router(admin_router, prefix="/v1", tags=["Control Plane"])
+app.include_router(upload_router, prefix="/v1", tags=["Ingestion"])
+app.include_router(chat_router, prefix="/v1", tags=["Assistance"])
 
 # Legacy/Alternative (api/v1)
-app.include_router(auth_router, prefix="/api/v1/auth", tags=["Identity"])
-app.include_router(drugs_router, prefix="/api/v1/drugs", tags=["Pharmacology"])
-app.include_router(predictions_router, prefix="/api/v1/predictions", tags=["Analytics"])
-app.include_router(admin_router, prefix="/api/v1/admin", tags=["Control Plane"])
-app.include_router(upload_router, prefix="/api/v1/upload", tags=["Ingestion"])
-app.include_router(chat_router, prefix="/api/v1/chat", tags=["Assistance"])
+app.include_router(auth_router, prefix="/api/v1", tags=["Identity"])
+app.include_router(drugs_router, prefix="/api/v1", tags=["Pharmacology"])
+app.include_router(predictions_router, prefix="/api/v1", tags=["Analytics"])
+app.include_router(admin_router, prefix="/api/v1", tags=["Control Plane"])
+app.include_router(upload_router, prefix="/api/v1", tags=["Ingestion"])
+app.include_router(chat_router, prefix="/api/v1", tags=["Assistance"])
 
 @app.get("/")
 async def root():
