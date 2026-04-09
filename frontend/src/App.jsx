@@ -7,6 +7,7 @@ import ProtectedRoute from './components/auth/ProtectedRoute';
 // Lazy Pages
 const Login = lazy(() => import('./pages/LoginPage'));
 const Landing = lazy(() => import('./pages/LandingPage'));
+const Register = lazy(() => import('./pages/RegisterPage'));
 const Dashboard = lazy(() => import('./pages/DashboardPage'));
 const DrugSearch = lazy(() => import('./pages/DrugSearchPage'));
 const DrugDetail = lazy(() => import('./pages/DrugDetailPage'));
@@ -34,7 +35,9 @@ const App = () => {
             <BrowserRouter>
                 <Suspense fallback={<Loader />}>
                     <Routes>
+                        <Route path="/" element={<Landing />} />
                         <Route path="/login" element={<Login />} />
+                        <Route path="/register" element={<Register />} />
                         
                         <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
                         <Route path="/drugs" element={<ProtectedRoute><DrugSearch /></ProtectedRoute>} />

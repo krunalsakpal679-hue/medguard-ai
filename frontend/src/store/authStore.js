@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { getCurrentUser, loginWithGoogle as loginApi } from '../services/api';
+import api, { getCurrentUser, loginWithGoogle as loginWithGoogleApi } from '../services/api';
 
 export const useAuthStore = create((set) => ({
     user: null,
@@ -11,7 +11,7 @@ export const useAuthStore = create((set) => ({
     loginWithGoogle: async (googleToken) => {
         set({ isLoading: true, error: null });
         try {
-            const { data } = await loginApi(googleToken);
+            const { data } = await loginWithGoogleApi(googleToken);
             localStorage.setItem('medguard_token', data.access_token);
             set({ 
                 user: data.user, 
@@ -22,6 +22,24 @@ export const useAuthStore = create((set) => ({
             return true;
         } catch (err) {
             set({ error: err.response?.data?.error || "Login Failed", isLoading: false });
+            return false;
+        }
+    },
+
+    register: async (registerData) => {
+        set({ isLoading: true, error: null });
+        try {
+            const { data } = await api.post('/auth/register', registerData);
+            localStorage.setItem('medguard_token', data.access_token);
+            set({ 
+                user: data.user, 
+                token: data.access_token, 
+                isAuthenticated: true, 
+                isLoading: false 
+            });
+            return true;
+        } catch (err) {
+            set({ error: err.response?.data?.error || "Registration Failed", isLoading: false });
             return false;
         }
     },
