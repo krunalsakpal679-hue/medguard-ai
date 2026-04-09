@@ -7,13 +7,20 @@ from app.core.config import settings
 from app.core.logger import logger
 from app.db.database import connect_db, close_db
 
+import traceback
+
 # Clinical Router Orchestration
-from app.api.routes.auth import router as auth_router
-from app.api.routes.drugs import router as drugs_router
-from app.api.routes.predictions import router as predictions_router
-from app.api.routes.admin import router as admin_router
-from app.api.routes.upload import router as upload_router
-from app.api.routes.chat import router as chat_router
+try:
+    from app.api.routes.auth import router as auth_router
+    from app.api.routes.drugs import router as drugs_router
+    from app.api.routes.predictions import router as predictions_router
+    from app.api.routes.admin import router as admin_router
+    from app.api.routes.upload import router as upload_router
+    from app.api.routes.chat import router as chat_router
+except Exception as e:
+    logger.error(f"SYSTEM CRITICAL - ORCHESTRATION FAILURE: {e}")
+    logger.error(traceback.format_exc())
+    raise e
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):

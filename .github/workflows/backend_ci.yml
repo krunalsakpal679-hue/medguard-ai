@@ -49,15 +49,13 @@ jobs:
       - name: Run tests
         working-directory: backend
         run: |
-          export PYTHONPATH=$PYTHONPATH:$(pwd)
-          pytest --ignore=app/ml --ignore=tests/performance -v
+          PYTHONPATH=$GITHUB_WORKSPACE/backend pytest --ignore=app/ml --ignore=tests/performance -v
         continue-on-error: true
 
       - name: Smoke test
         working-directory: backend
         run: |
-          export PYTHONPATH=$PYTHONPATH:$(pwd)
-          python -c "from app.main import app; print('Backend Boot: OK')"
+          PYTHONPATH=$GITHUB_WORKSPACE/backend python -c "from app.main import app; print('Backend Boot: OK')"
 
       - name: Trigger Render Deploy
         if: github.ref == 'refs/heads/main' && success()
