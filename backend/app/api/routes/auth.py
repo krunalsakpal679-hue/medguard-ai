@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException, status, Query
 from google.oauth2 import id_token
 from google.auth.transport import requests as google_requests
-from pydantic import BaseModel
+from pydantic import BaseModel, EmailStr
 from typing import Optional, Dict
 import uuid
 from datetime import datetime, timezone, timedelta
@@ -12,6 +12,12 @@ from app.services import auth_service
 from app.db.database import get_db
 from app.models.user import UserInDB, UserResponse
 from motor.motor_asyncio import AsyncIOMotorDatabase
+
+from enum import Enum
+
+class UserRole(str, Enum):
+    USER = "user"
+    ADMIN = "admin"
 
 router = APIRouter(prefix="/auth", tags=["authentication"])
 

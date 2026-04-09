@@ -6,6 +6,7 @@ import ProtectedRoute from './components/auth/ProtectedRoute';
 
 // Lazy Pages
 const Login = lazy(() => import('./pages/LoginPage'));
+const Landing = lazy(() => import('./pages/LandingPage'));
 const Dashboard = lazy(() => import('./pages/DashboardPage'));
 const DrugSearch = lazy(() => import('./pages/DrugSearchPage'));
 const DrugDetail = lazy(() => import('./pages/DrugDetailPage'));
@@ -65,7 +66,7 @@ const App = () => {
                             </ProtectedRoute>
                         } />
 
-                        <Route path="/" element={<Navigate to="/dashboard" replace />} />
+                        <Route path="/" element={<Landing />} />
                         <Route path="*" element={<div className="text-white text-center mt-20">404 Clinical Node Not Found</div>} />
                     </Routes>
                 </Suspense>
