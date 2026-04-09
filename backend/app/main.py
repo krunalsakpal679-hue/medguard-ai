@@ -40,14 +40,23 @@ app = FastAPI(
     redoc_url="/api/v1/redoc"
 )
 
-# CORS
+# CORS - Nuclear Option: Broad and Early
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
     allow_credentials=False,
     allow_methods=["*"],
     allow_headers=["*"],
+    expose_headers=["*"]
 )
+
+@app.middleware("http")
+async def add_cors_header_manually(request: Request, call_next):
+    response = await call_next(request)
+    response.headers["Access-Control-Allow-Origin"] = "*"
+    response.headers["Access-Control-Allow-Methods"] = "*"
+    response.headers["Access-Control-Allow-Headers"] = "*"
+    return response
 
 # Internal Routing Integration
 # Primary (v1)
