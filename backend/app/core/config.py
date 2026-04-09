@@ -15,9 +15,11 @@ class Settings(BaseSettings):
     ALGORITHM: str = "HS256"
     JWT_EXPIRE_MINUTES: int = 60 * 24 * 7  # 1 week
     
-    # OAuth
+    # OAuth & AI
     GOOGLE_CLIENT_ID: str = ""
     GOOGLE_CLIENT_SECRET: str = ""
+    GOOGLE_API_KEY: Optional[str] = None
+    HUGGINGFACE_API_KEY: Optional[str] = None
     
     # Infrastructure
     CORS_ORIGINS: str = "*"
