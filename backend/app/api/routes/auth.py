@@ -74,8 +74,14 @@ async def register(request: RegisterRequest, db: AsyncIOMotorDatabase = Depends(
     # Check if email exists
     if await db.users.find_one({"email": request.email}):
         raise HTTPException(status_code=400, detail="Email already registered")
-        
-    hashed_password = pwd_context.hash(request.password)
+    
+    # bcrypt has a 72-byte limit - truncate safely
+    password_bytes = request.password.encode("utf-8")[:72]
+    try:
+        hashed_password = pwd_context.hash(password_bytes)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Password hashing failed: {str(e)}")
+    
     user_role = UserRole.ADMIN if request.role == "admin" else UserRole.USER
     
     user_dict = {
@@ -107,8 +113,10 @@ async def login(request: LoginRequest, db: AsyncIOMotorDatabase = Depends(get_db
     user_data = await db.users.find_one({"email": request.email})
     if not user_data or not user_data.get("hashed_password"):
         raise HTTPException(status_code=401, detail="Invalid email or password")
-        
-    if not pwd_context.verify(request.password, user_data.get("hashed_password")):
+    
+    # bcrypt 72-byte limit - must match how we hash during register
+    password_bytes = request.password.encode("utf-8")[:72]
+    if not pwd_context.verify(password_bytes, user_data.get("hashed_password")):
         raise HTTPException(status_code=401, detail="Invalid email or password")
         
     user = UserInDB(**user_data)
