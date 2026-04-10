@@ -1,8 +1,9 @@
 import axios from 'axios';
-import { apiUrl } from '../utils/environment';
+import { config } from '../utils/environment';
 
+// apiUrl already contains /api/v1 suffix from environment.js
 const api = axios.create({
-    baseURL: apiUrl,
+    baseURL: config.apiUrl,
     headers: {
         'Content-Type': 'application/json'
     }
