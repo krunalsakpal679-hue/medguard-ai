@@ -26,14 +26,17 @@ async def run_prediction(
     # 1. Fetch drug objects from clinical DB
     drugs = []
     for d_id in drug_ids:
-        if not ObjectId.is_valid(d_id):
-            continue
-        drug_data = await db.drugs.find_one({"_id": ObjectId(d_id)})
+        if ObjectId.is_valid(d_id):
+            drug_data = await db.drugs.find_one({"_id": ObjectId(d_id)})
+        else:
+            # Resolve by name if it's from OCR
+            drug_data = await db.drugs.find_one({"name": {"$regex": f"^{d_id}$", "$options": "i"}})
+            
         if drug_data:
             drugs.append(DrugInDB(**drug_data))
     
     if len(drugs) < 2:
-        raise ValueError("Must provide at least 2 valid drug IDs for interaction check.")
+        raise ValueError("Must provide at least 2 valid drug IDs or recognized names for interaction check.")
 
     pair_results = []
     severities = []

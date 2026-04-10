@@ -281,8 +281,18 @@ const PredictionPage = () => {
                                     </p>
                                 </div>
                                 <div className="flex gap-4">
-                                    <button className="p-4 bg-white/10 hover:bg-white text-indigo-100 hover:text-indigo-950 rounded-2xl transition-all"><Download size={24} /></button>
-                                    <button className="p-4 bg-white/10 hover:bg-white text-indigo-100 hover:text-indigo-950 rounded-2xl transition-all"><Share2 size={24} /></button>
+                                    <button onClick={() => window.print()} className="p-4 bg-white/10 hover:bg-white text-indigo-100 hover:text-indigo-950 rounded-2xl transition-all" title="Download Report"><Download size={24} /></button>
+                                    <button onClick={() => {
+                                        if (navigator.share) {
+                                            navigator.share({
+                                                title: 'MedGuard AI Clinical Report',
+                                                text: results.human_readable_summary,
+                                                url: window.location.href,
+                                            }).catch(console.error)
+                                        } else {
+                                            alert('Sharing not supported on this browser.')
+                                        }
+                                    }} className="p-4 bg-white/10 hover:bg-white text-indigo-100 hover:text-indigo-950 rounded-2xl transition-all" title="Share Report"><Share2 size={24} /></button>
                                 </div>
                             </div>
 
@@ -298,8 +308,12 @@ const PredictionPage = () => {
                                             >
                                                 <div className="flex items-center space-x-6">
                                                     <div className="flex -space-x-3">
-                                                        <div className="w-10 h-10 rounded-full bg-slate-900 text-white flex items-center justify-center text-[10px] font-black border-2 border-white shadow-lg">A</div>
-                                                        <div className="w-10 h-10 rounded-full bg-indigo-600 text-white flex items-center justify-center text-[10px] font-black border-2 border-white shadow-lg">B</div>
+                                                        <div className="w-10 h-10 rounded-full bg-slate-900 text-white flex items-center justify-center text-[10px] font-black border-2 border-white shadow-lg">
+                                                            {(pair.drug_a_name || 'A').substring(0, 2).toUpperCase()}
+                                                        </div>
+                                                        <div className="w-10 h-10 rounded-full bg-indigo-600 text-white flex items-center justify-center text-[10px] font-black border-2 border-white shadow-lg">
+                                                            {(pair.drug_b_name || 'B').substring(0, 2).toUpperCase()}
+                                                        </div>
                                                     </div>
                                                     <h4 className="text-sm font-black text-slate-900 uppercase tracking-tight">
                                                         {pair.drug_a_name} <span className="text-slate-300 mx-2">VS</span> {pair.drug_b_name}
