@@ -95,7 +95,8 @@ async def register(request: RegisterRequest, db: AsyncIOMotorDatabase = Depends(
     jti = str(uuid.uuid4())
     access_token = create_access_token(data={"sub": str(user.id), "jti": jti, "role": user.role})
     
-    return {"access_token": access_token, "token_type": "bearer", "user": user}
+    user_response = UserResponse(**user_dict)
+    return {"access_token": access_token, "token_type": "bearer", "user": user_response}
 
 class LoginRequest(BaseModel):
     email: EmailStr

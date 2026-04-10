@@ -34,17 +34,26 @@ class UserInDB(UserBase):
     id: PyObjectId = Field(alias="_id")
     google_id: Optional[str] = None
     hashed_password: Optional[str] = None
-    role: UserRole
+    role: UserRole = UserRole.USER
     is_active: bool = True
     created_at: datetime = Field(default_factory=datetime.utcnow)
     last_login: Optional[datetime] = None
     prediction_count: int = 0
 
-class UserResponse(UserBase):
-    id: PyObjectId
+class UserResponse(BaseModel):
+    id: PyObjectId = Field(alias="_id")
+    email: EmailStr
+    full_name: str
+    profile_picture: Optional[str] = None
     role: UserRole
     is_active: bool
     created_at: datetime
+
+    model_config = ConfigDict(
+        populate_by_name=True,
+        arbitrary_types_allowed=True,
+        json_encoders={ObjectId: str}
+    )
 
 class UserUpdate(BaseModel):
     full_name: Optional[str] = None
