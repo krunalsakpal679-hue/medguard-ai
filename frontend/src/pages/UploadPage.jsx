@@ -117,7 +117,7 @@ const UploadPage = () => {
         if (selectedDrugs.length === 0) return
         // Pass selected drug names to the Prediction page via route state
         navigate('/predict', {
-            state: { preloadedDrugs: selectedDrugs.map(d => ({ id: d.name, name: d.name })) }
+            state: { preloadedDrugs: selectedDrugs.map(d => ({ id: d, name: d })) }
         })
     }
 
