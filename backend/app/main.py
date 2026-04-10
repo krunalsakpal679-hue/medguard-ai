@@ -40,23 +40,48 @@ app = FastAPI(
     redoc_url="/api/v1/redoc"
 )
 
-# CORS - Nuclear Option: Broad and Early
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],
-    allow_credentials=False,
-    allow_methods=["*"],
-    allow_headers=["*"],
-    expose_headers=["*"]
-)
-
 @app.middleware("http")
-async def add_cors_header_manually(request: Request, call_next):
+async def cors_handler(request: Request, call_next):
+    # Handle Preflight (OPTIONS)
+    if request.method == "OPTIONS":
+        response = Response()
+        response.status_code = 204
+        response.headers["Access-Control-Allow-Origin"] = "*"
+        response.headers["Access-Control-Allow-Methods"] = "GET, POST, PUT, DELETE, OPTIONS, PATCH"
+        response.headers["Access-Control-Allow-Headers"] = "*"
+        response.headers["Access-Control-Max-Age"] = "86400"
+        return response
+
+    # Actual Request
     response = await call_next(request)
     response.headers["Access-Control-Allow-Origin"] = "*"
-    response.headers["Access-Control-Allow-Methods"] = "*"
+    response.headers["Access-Control-Allow-Methods"] = "GET, POST, PUT, DELETE, OPTIONS, PATCH"
     response.headers["Access-Control-Allow-Headers"] = "*"
     return response
+
+@app.exception_handler(404)
+async def custom_404_handler(request: Request, exc):
+    return JSONResponse(
+        status_code=404,
+        content={"detail": "Not Found"},
+        headers={
+            "Access-Control-Allow-Origin": "*",
+            "Access-Control-Allow-Methods": "*",
+            "Access-Control-Allow-Headers": "*"
+        }
+    )
+
+@app.exception_handler(500)
+async def custom_500_handler(request: Request, exc):
+    return JSONResponse(
+        status_code=500,
+        content={"detail": "Internal Server Error", "error": str(exc)},
+        headers={
+            "Access-Control-Allow-Origin": "*",
+            "Access-Control-Allow-Methods": "*",
+            "Access-Control-Allow-Headers": "*"
+        }
+    )
 
 # Internal Routing Integration
 # Primary (v1)
