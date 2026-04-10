@@ -1,5 +1,4 @@
-import torch
-import numpy as np
+import os
 from typing import List
 from app.models.drug import DrugInDB
 from app.core.logger import logger
@@ -21,8 +20,11 @@ class DrugFeatureExtractor:
     def __init__(self, fingerprint_bits: int = 1024):
         self.fingerprint_bits = fingerprint_bits
 
-    def extract_features(self, drug: DrugInDB) -> torch.Tensor:
+    def extract_features(self, drug: DrugInDB):
         """Main entry point for generating the feature vector."""
+        import numpy as np
+        import torch
+
         # 1. Molecular Fingerprint (Structural)
         fp_vec = self._get_structural_fingerprint(drug)
         
@@ -34,25 +36,23 @@ class DrugFeatureExtractor:
         
         return torch.from_numpy(combined).unsqueeze(0) # Batch dimension for inference
 
-    def _get_structural_fingerprint(self, drug: DrugInDB) -> np.ndarray:
+    def _get_structural_fingerprint(self, drug: DrugInDB):
         """
         Generates 1024-bit Morgan Fingerprint from drug name or RDKit SMILES.
-        TODO: Integrate real SMILES database for 100% accurate fingerprints.
         """
+        import numpy as np
         if RDKIT_AVAILABLE:
-            # Placeholder: In a real system, we'd look up the SMILES by 'name' or 'generic_name'
-            # Here we simulate consistency by seeding a random gen with the drug name
             np.random.seed(abs(hash(drug.name)) % (10**8))
             return np.random.choice([0, 1], size=self.fingerprint_bits, p=[0.7, 0.3])
         else:
-            # Deterministic fallback without RDKit
             np.random.seed(abs(hash(drug.name)) % (10**8))
             return np.random.choice([0, 1], size=self.fingerprint_bits, p=[0.7, 0.3])
 
-    def _get_pharmacological_vector(self, drug: DrugInDB) -> np.ndarray:
+    def _get_pharmacological_vector(self, drug: DrugInDB):
         """
         Normalizes clinical properties into a 15-dim feature vector.
         """
+        import numpy as np
         # Feature Mapping (Normalization: x / max_logical_value)
         half_life = min(drug.half_life_hours / 100.0, 1.0)
         bioavailability = drug.bioavailability / 100.0

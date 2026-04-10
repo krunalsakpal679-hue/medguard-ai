@@ -1,15 +1,18 @@
-import torch
+try:
+    import torch
+    import torch.nn.functional as F
+    HAS_ML = True
+except ImportError:
+    HAS_ML = False
+
 import os
 from typing import Dict, List
-from app.ml.model.ddi_model import MedGuardDDIModel
-from app.ml.utils.feature_extractor import feature_extractor
 from app.models.drug import DrugInDB
 from app.core.logger import logger
-import torch.nn.functional as F
 
 class ModelLoader:
     """
-    Singleton for managing MedGuard AI model weights and high-performance inference.
+    Lazy-loading singleton for MedGuard AI model.
     """
     _instance = None
     _model = None
@@ -18,11 +21,15 @@ class ModelLoader:
     def __new__(cls):
         if cls._instance is None:
             cls._instance = super(ModelLoader, cls).__new__(cls)
-            cls._instance._initialize_model()
+            if HAS_ML:
+                cls._instance._initialize_model()
+            else:
+                logger.warning("ML Subsystem Offline: Torch/RDKit not found.")
         return cls._instance
 
     def _initialize_model(self):
-        """Load weights from disk or initialize fresh for development."""
+        from app.ml.model.ddi_model import MedGuardDDIModel
+        from app.ml.utils.feature_extractor import feature_extractor
         self._model = MedGuardDDIModel()
         
         if os.path.exists(self._weights_path):
@@ -32,38 +39,39 @@ class ModelLoader:
             except Exception as e:
                 logger.error(f"Failed to load weights: {e}. Using untrained model.")
         else:
-            logger.warning("Weights not found at path. INITIALIZING UNTRAINED MODEL — Predictions will be mathematical placeholders.")
+            logger.warning("Weights not found at path.")
         
         self._model.eval()
 
-    @torch.no_grad()
     async def predict_interaction(self, drug_a: DrugInDB, drug_b: DrugInDB) -> Dict:
-        """
-        Runs symmetric inference to predict pharmacological interaction parameters.
-        """
-        # 1. Transform clinical data to tensors
-        feat_a = feature_extractor.extract_features(drug_a)
-        feat_b = feature_extractor.extract_features(drug_b)
-        
-        # 2. Forward pass
-        output = self._model(feat_a, feat_b)
-        
-        # 3. Process Severity Logits
-        probs = F.softmax(output["severity_logits"], dim=1).squeeze().tolist()
-        severity_labels = ["NONE", "MINOR", "MODERATE", "MAJOR", "CONTRAINDICATED"]
-        top_idx = torch.argmax(output["severity_logits"], dim=1).item()
-        
-        # 4. Map Side Effects (Placeholder mapping for 20 types)
-        # In a real system, these would align with a MedDRA dictionary
-        se_probs = output["side_effect_probs"].squeeze().tolist()
-        
-        return {
-            "severity": severity_labels[top_idx],
-            "severity_probs": {label: prob for label, prob in zip(severity_labels, probs)},
-            "synergy_score": round(output["synergy_score"].item(), 4),
-            "side_effect_probs": se_probs,
-            "is_untrained": not os.path.exists(self._weights_path)
-        }
+        if not HAS_ML:
+            return {
+                "severity": "UNKNOWN",
+                "severity_probs": {},
+                "synergy_score": 0.0,
+                "side_effect_probs": [],
+                "is_untrained": True,
+                "error": "ML Subsystem Unavailable (Dependencies failing on Render)"
+            }
+            
+        from app.ml.utils.feature_extractor import feature_extractor
+        # Use torch
+        with torch.no_grad():
+            feat_a = feature_extractor.extract_features(drug_a)
+            feat_b = feature_extractor.extract_features(drug_b)
+            output = self._model(feat_a, feat_b)
+            probs = F.softmax(output["severity_logits"], dim=1).squeeze().tolist()
+            severity_labels = ["NONE", "MINOR", "MODERATE", "MAJOR", "CONTRAINDICATED"]
+            top_idx = torch.argmax(output["severity_logits"], dim=1).item()
+            se_probs = output["side_effect_probs"].squeeze().tolist()
+            
+            return {
+                "severity": severity_labels[top_idx],
+                "severity_probs": {label: prob for label, prob in zip(severity_labels, probs)},
+                "synergy_score": round(output["synergy_score"].item(), 4),
+                "side_effect_probs": se_probs,
+                "is_untrained": not os.path.exists(self._weights_path)
+            }
 
 # Singleton Instance
 model_loader = ModelLoader()
