@@ -40,25 +40,16 @@ app = FastAPI(
     redoc_url="/api/v1/redoc"
 )
 
-@app.middleware("http")
-async def cors_handler(request: Request, call_next):
-    # Handle Preflight (OPTIONS)
-    if request.method == "OPTIONS":
-        response = Response()
-        response.status_code = 204
-        response.headers["Access-Control-Allow-Origin"] = "*"
-        response.headers["Access-Control-Allow-Methods"] = "GET, POST, PUT, DELETE, OPTIONS, PATCH"
-        response.headers["Access-Control-Allow-Headers"] = "*"
-        response.headers["Access-Control-Max-Age"] = "86400"
-        return response
+# CORS - Standard Implementation
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=False,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
-    # Actual Request
-    response = await call_next(request)
-    response.headers["Access-Control-Allow-Origin"] = "*"
-    response.headers["Access-Control-Allow-Methods"] = "GET, POST, PUT, DELETE, OPTIONS, PATCH"
-    response.headers["Access-Control-Allow-Headers"] = "*"
-    return response
-
+# Exception Handlers
 @app.exception_handler(404)
 async def custom_404_handler(request: Request, exc):
     return JSONResponse(
