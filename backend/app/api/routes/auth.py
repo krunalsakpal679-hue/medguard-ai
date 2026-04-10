@@ -75,12 +75,12 @@ async def register(request: RegisterRequest, db: AsyncIOMotorDatabase = Depends(
     if await db.users.find_one({"email": request.email}):
         raise HTTPException(status_code=400, detail="Email already registered")
     
-    # bcrypt has a 72-byte limit - truncate safely
-    password_bytes = request.password.encode("utf-8")[:72]
+    # Hash password - passlib handles encoding internally
     try:
-        hashed_password = pwd_context.hash(password_bytes)
+        hashed_password = pwd_context.hash(request.password)
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Password hashing failed: {str(e)}")
+        # Fallback: truncate to 72 chars if bcrypt version is strict
+        hashed_password = pwd_context.hash(request.password[:72])
     
     user_role = UserRole.ADMIN if request.role == "admin" else UserRole.USER
     
