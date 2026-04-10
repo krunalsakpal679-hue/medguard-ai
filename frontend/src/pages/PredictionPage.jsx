@@ -18,7 +18,9 @@ import {
 import { useAuthStore } from '../store/authStore'
 import RiskBadge from '../components/dashboard/RiskBadge'
 
-const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:8000/api/v1'
+import { config } from '../utils/environment'
+
+const API_BASE = config.apiUrl
 
 const PredictionPage = () => {
     const { token } = useAuthStore()

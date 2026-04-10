@@ -1,8 +1,9 @@
 import { useState, useCallback, useEffect } from 'react'
 import axios from 'axios'
+import { config } from '../utils/environment'
 import { useAuthStore } from '../store/authStore'
 
-const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:8000/api/v1'
+const API_BASE = config.apiUrl
 
 export const useChat = () => {
     const { token } = useAuthStore()
@@ -56,7 +57,7 @@ export const useChat = () => {
         setSelectedLanguage(lang)
         
         // 1. Optimistic UI: Add user message immediately
-        const userMsg = { role: 'user', content: text, language: lang, timestamp: new Date() }
+        const userMsg = { role: 'user', content: text, language: lang, timestamp: new Date(), isBot: false, text: text }
         setMessages(prev => [...prev, userMsg])
         setIsLoading(true)
         setError(null)
@@ -82,7 +83,9 @@ export const useChat = () => {
                 content: res.data.response,
                 language: res.data.language,
                 detected_drugs: res.data.detected_drugs,
-                timestamp: new Date()
+                timestamp: new Date(),
+                isBot: true,
+                text: res.data.response
             }
             setMessages(prev => [...prev, aiMsg])
         } catch (err) {
